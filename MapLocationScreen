@@ -1,0 +1,63 @@
+//Localização da Loja
+
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter/cupertino.dart';
+
+
+
+
+class MapLocationScreen extends StatefulWidget{
+  const MapLocationScreen({super.key});
+
+  @override
+  State<MapLocationScreen> createState() => _MapLocationScreenState();
+}
+
+class _MapLocationScreenState extends State<MapLocationScreen> {
+
+  late GoogleMapController mapController;
+
+  final LatLng _center = const LatLng(37.019356, -7.930440);
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Our Location',
+          style: TextStyle(color: Colors.white)),
+          centerTitle: true,
+          backgroundColor: Colors.teal,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.arrow_back_rounded,
+              size: 20,
+              color: Colors.white,),
+          ),
+        ),
+        body: GoogleMap(
+          onMapCreated: _onMapCreated,
+          initialCameraPosition: CameraPosition(
+            target: _center,
+            zoom: 11.0,
+          ),
+          markers: {
+            const Marker(
+              markerId: const MarkerId("Market Delight"),
+              position: LatLng(37.019356, -7.930440),
+            ), // Marker
+          },
+        ), // GoogleMap
+      ), // Scaffold
+    ); // MaterialApp
+  }
+}
