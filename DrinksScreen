@@ -1,0 +1,439 @@
+//Catálogo de produtos da Categoria “Drinks”
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:masters_project_definitive/adminshop/database.dart';
+import 'package:masters_project_definitive/profile.screen.dart';
+import 'package:masters_project_definitive/shop.screen.dart';
+import 'package:masters_project_definitive/models/product.model.dart';
+
+import 'models/details.drinks.dart';
+import 'models/details.veggies.dart';
+
+
+void main(){
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent
+
+  ));
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget{
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Dashboard',
+      theme:  ThemeData(
+          primarySwatch: Colors.red
+      ),
+      home: const DrinksScreen(),
+
+    );
+  }
+}
+
+class DrinksScreen extends StatefulWidget {
+  const DrinksScreen({super.key});
+
+  @override
+  State<DrinksScreen> createState() => _DrinksScreenState();
+}
+
+class _DrinksScreenState extends State<DrinksScreen> {
+  final user = FirebaseAuth.instance.currentUser!;
+
+  Stream? sodasitemStream;
+  Stream? alcoholitemStream;
+  Stream? wateritemStream;
+  Stream? biodrinksitemStream;
+
+  ontheLoadSodas()async{
+    sodasitemStream=await DatabaseMethods().getFoodItem("Sodas");
+    setState(() {
+
+    });
+  }
+  ontheLoadAlcohol()async{
+    alcoholitemStream=await DatabaseMethods().getFoodItem("Alcohol");
+    setState(() {
+
+    });
+  }
+  ontheLoadWater()async{
+    wateritemStream=await DatabaseMethods().getFoodItem("Water");
+    setState(() {
+
+    });
+  }
+  ontheLoadBiodrinks()async{
+    biodrinksitemStream=await DatabaseMethods().getFoodItem("Bio Drinks");
+    setState(() {
+
+    });
+  }
+
+  @override
+  void initState(){
+    ontheLoadSodas();
+    ontheLoadAlcohol();
+    ontheLoadWater();
+    ontheLoadBiodrinks();
+    super.initState();
+
+  }
+
+  Widget allSodasItems(){
+
+    return StreamBuilder(stream: sodasitemStream, builder: (context, AsyncSnapshot snapshot){
+      return snapshot.hasData? ListView.builder(
+          padding: EdgeInsets.zero,
+          itemCount: snapshot.data.docs.length,
+          shrinkWrap: true,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (context, index){
+            DocumentSnapshot ds=snapshot.data.docs[index];
+            return GestureDetector(
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsVeggies(detail: ds["Detail"], name: ds["Name"], price: ds["Price"], image: ds["Image"])));
+              },
+
+              child: Container(
+                margin: EdgeInsets.all(4),
+                child: Material(
+
+                  elevation: 5.0,
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.orange,
+
+                  child: Container(
+
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+
+                        children: [
+                          Image.network(ds["Image"], height: 100, width: 100, fit: BoxFit.cover,),
+                          Text(ds["Name"], textAlign: TextAlign.center,style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
+                          Text("\€"+ds["Price"],style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
+
+
+                        ],)
+
+                  ),
+                ),
+              ),
+            );
+
+          }):CircularProgressIndicator();
+    });
+
+  }
+  Widget allAlcoholItems(){
+
+    return StreamBuilder(stream: alcoholitemStream, builder: (context, AsyncSnapshot snapshot){
+      return snapshot.hasData? ListView.builder(
+          padding: EdgeInsets.zero,
+          itemCount: snapshot.data.docs.length,
+          shrinkWrap: true,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (context, index){
+            DocumentSnapshot ds=snapshot.data.docs[index];
+            return GestureDetector(
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsVeggies(detail: ds["Detail"], name: ds["Name"], price: ds["Price"], image: ds["Image"])));
+              },
+
+              child: Container(
+                margin: EdgeInsets.all(4),
+                child: Material(
+
+                  elevation: 5.0,
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.orange,
+
+                  child: Container(
+
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+
+                        children: [
+                          Image.network(ds["Image"], height: 100, width: 100, fit: BoxFit.cover,),
+                          Text(ds["Name"], textAlign: TextAlign.center,style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
+                          Text("\€"+ds["Price"],style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
+
+
+                        ],)
+
+                  ),
+                ),
+              ),
+            );
+
+          }):CircularProgressIndicator();
+    });
+
+  }
+  Widget allWaterItems(){
+
+    return StreamBuilder(stream: wateritemStream, builder: (context, AsyncSnapshot snapshot){
+      return snapshot.hasData? ListView.builder(
+          padding: EdgeInsets.zero,
+          itemCount: snapshot.data.docs.length,
+          shrinkWrap: true,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (context, index){
+            DocumentSnapshot ds=snapshot.data.docs[index];
+            return GestureDetector(
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsVeggies(detail: ds["Detail"], name: ds["Name"], price: ds["Price"], image: ds["Image"])));
+              },
+
+              child: Container(
+                margin: EdgeInsets.all(4),
+                child: Material(
+
+                  elevation: 5.0,
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.orange,
+
+                  child: Container(
+
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+
+                        children: [
+                          Image.network(ds["Image"], height: 100, width: 100, fit: BoxFit.cover,),
+                          Text(ds["Name"], textAlign: TextAlign.center,style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
+                          Text("\€"+ds["Price"],style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
+
+
+                        ],)
+
+                  ),
+                ),
+              ),
+            );
+
+          }):CircularProgressIndicator();
+    });
+
+  }
+  Widget allBiodrinksItems(){
+
+    return StreamBuilder(stream: biodrinksitemStream, builder: (context, AsyncSnapshot snapshot){
+      return snapshot.hasData? ListView.builder(
+          padding: EdgeInsets.zero,
+          itemCount: snapshot.data.docs.length,
+          shrinkWrap: true,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (context, index){
+            DocumentSnapshot ds=snapshot.data.docs[index];
+            return GestureDetector(
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsDrinks(detail: ds["Detail"], name: ds["Name"], price: ds["Price"], image: ds["Image"])));
+              },
+
+              child: Container(
+                margin: EdgeInsets.all(4),
+                child: Material(
+
+                  elevation: 5.0,
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.orange,
+
+                  child: Container(
+
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+
+                        children: [
+                          Image.network(ds["Image"], height: 100, width: 100, fit: BoxFit.cover,),
+                          Text(ds["Name"], textAlign: TextAlign.center,style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
+                          Text("\€"+ds["Price"],style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
+
+
+                        ],)
+
+                  ),
+                ),
+              ),
+            );
+
+          }):CircularProgressIndicator();
+    });
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          children: [
+            Container(
+
+              decoration: BoxDecoration(
+                  color:  Color(0xFFFF9800),
+                  borderRadius: const BorderRadius.only(
+                    bottomRight: Radius.circular(50),
+                  )
+              ),
+
+              child: Column(
+                children: [
+                  const SizedBox(height: 50),
+                  ListTile(
+                    contentPadding: EdgeInsets.symmetric(horizontal: 30),
+                    title: Text('Welcome Back',
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            color: Colors.white
+                        )),
+                    subtitle: Text(
+                      user.email!,
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen())),
+                    trailing: const CircleAvatar(
+                      radius: 30,
+                      backgroundImage: AssetImage("lib/assets/veggies.png"),
+
+                    ),
+                    leading: IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(Icons.arrow_back_rounded,
+                        size: 20,
+                        color: Colors.white,),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+
+                ],
+
+
+              ),
+            ),
+            const SizedBox(height: 30),
+            Text(
+              "Drinks",
+              style: TextStyle(fontSize: 30, color: Colors.orange,fontWeight: FontWeight.bold),
+
+
+
+            ),
+            const SizedBox(height: 5),
+            Text(
+              "Sodas",
+              style: TextStyle(fontSize: 20, color: Colors.orange,fontWeight: FontWeight.bold),
+
+
+
+            ),
+            const SizedBox(height: 20),
+            Container(
+                height: 170,
+                child: allSodasItems()),
+            const SizedBox(height: 20),
+            Text(
+              "Alcohol",
+              style: TextStyle(fontSize: 20, color: Colors.orange,fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            Container(
+                height: 170,
+                child: allAlcoholItems()),
+            const SizedBox(height: 20),
+            Text(
+              "Water",
+              style: TextStyle(fontSize: 20, color: Colors.orange,fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            Container(
+                height: 170,
+                child: allWaterItems()),
+            const SizedBox(height: 20),
+            Text(
+              "Bio Drinks",
+              style: TextStyle(fontSize: 20, color: Colors.orange,fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            Container(
+                height: 170,
+                child: allBiodrinksItems()),
+
+
+          ],
+        ),
+      ),
+    );
+
+
+  }
+
+  itemDashboard(String title, IconData iconData, Color background) => Container(
+    decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+              offset: const Offset(0, 5),
+              color:  Theme.of(context).primaryColor.withOpacity(.2),
+              spreadRadius: 2,
+              blurRadius: 5
+          )
+        ]
+    ),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+              color:  background,
+              shape: BoxShape.circle
+          ),
+          child: Icon(iconData, color: Colors.white),
+        ),
+        const SizedBox(height: 8),
+        Text(title, style: Theme.of(context).textTheme.titleMedium)
+      ],
+    ),
+
+
+
+  );
+}
+
+class DrinksCard extends StatelessWidget{
+  final int index;
+  DrinksCard({
+    Key? key,
+    required this.index,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context){
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 20,
+            backgroundImage: NetworkImage(
+              Product.drinks[index].imageUrl,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
