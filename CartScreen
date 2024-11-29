@@ -1,0 +1,366 @@
+Carrinho de Compras
+
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:masters_project_definitive/shop.screen.dart';
+import 'package:masters_project_definitive/veggies.screen.dart';
+import 'package:masters_project_definitive/profile.screen.dart';
+
+import '../adminshop/database.dart';
+import '../adminshop/shared_preferences.dart';
+
+
+
+void main(){
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent
+
+  ));
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget{
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Dashboard',
+      theme:  ThemeData(
+          primarySwatch: Colors.red
+      ),
+      home: const CartScreen(),
+
+    );
+  }
+}
+
+
+
+class CartScreen extends StatefulWidget {
+  const CartScreen({super.key});
+
+  @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+
+  String? id, wallet;
+  int total=0, amount2=0;
+
+  void startTimer(){
+    Timer(Duration(seconds: 3), () {
+      amount2=total;
+      setState(() {
+
+      });
+    });
+  }
+
+  getthesharedpref()async{
+    id= await SharedPreferenceHelper().getUserId();
+    wallet= await SharedPreferenceHelper().getUserWallet();
+    setState(() {
+
+    });
+  }
+
+  ontheload()async{
+    await getthesharedpref();
+    veggiesStream= await DatabaseMethods().getVeggiesCart(id!);
+    setState(() {
+
+    });
+  }
+  ontheloadFoods()async{
+    await getthesharedpref();
+    foodsStream= await DatabaseMethods().getFoodCart(id!);
+    setState(() {
+
+    });
+  }
+
+  @override
+  void initState() {
+    ontheloadFoods();
+    ontheload();
+    startTimer();
+    super.initState();
+  }
+
+  Stream? veggiesStream;
+  Stream? foodsStream;
+
+  Widget veggiesCart() {
+    return StreamBuilder(
+        stream: veggiesStream,
+        builder: (context, AsyncSnapshot snapshot) {
+          return snapshot.hasData
+              ? ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: snapshot.data.docs.length,
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              itemBuilder: (context, index) {
+                DocumentSnapshot ds = snapshot.data.docs[index];
+                total= total+ int.parse(ds["Total"]);
+                return Container(
+                  margin: EdgeInsets.only(left: 20.0, right: 20.0, bottom: 10.0),
+                  child: Material(
+                    elevation: 5.0,
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.orangeAccent,
+                          borderRadius: BorderRadius.circular(10)),
+                      padding: EdgeInsets.all(10),
+                      child: Row(
+                        children: [
+                          Container(
+                            height: 90,
+                            width: 40,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.white),
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Center(child: Text(ds["Quantity"], style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),)),
+                          ),
+                          SizedBox(
+                            width: 20.0,
+                          ),
+                          ClipRRect(
+                              borderRadius: BorderRadius.circular(60),
+                              child: Image.network(
+                                ds["Image"],
+                                height: 90,
+                                width: 90,
+                                fit: BoxFit.cover,
+                              )),
+                          SizedBox(
+                            width: 20.0,
+                          ),
+                          Column(
+                            children: [
+                              Text(
+                                ds["Name"],
+                                style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
+
+
+                              ),
+                              Text(
+                                "\$"+ ds["Total"],
+                                style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
+
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              })
+              : CircularProgressIndicator();
+        });
+  }
+
+
+  Widget foodsCart() {
+    return StreamBuilder(
+        stream: foodsStream,
+        builder: (context, AsyncSnapshot snapshot) {
+          return snapshot.hasData
+              ? ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: snapshot.data.docs.length,
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              itemBuilder: (context, index) {
+                DocumentSnapshot ds = snapshot.data.docs[index];
+                total= total+ int.parse(ds["Total"]);
+                return Container(
+                  margin: EdgeInsets.only(left: 20.0, right: 20.0, bottom: 10.0),
+                  child: Material(
+                    elevation: 5.0,
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10)),
+                      padding: EdgeInsets.all(10),
+                      child: Row(
+                        children: [
+                          Container(
+                            height: 90,
+                            width: 40,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.orangeAccent),
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Center(child: Text(ds["Quantity"])),
+                          ),
+                          SizedBox(
+                            width: 20.0,
+                          ),
+                          ClipRRect(
+                              borderRadius: BorderRadius.circular(60),
+                              child: Image.network(
+                                ds["Image"],
+                                height: 90,
+                                width: 90,
+                                fit: BoxFit.cover,
+                              )),
+                          SizedBox(
+                            width: 20.0,
+                          ),
+                          Column(
+                            children: [
+                              Text(
+                                ds["Name"],
+
+                              ),
+                              Text(
+                                "\$"+ ds["Total"],
+
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              })
+              : CircularProgressIndicator();
+        });
+  }
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        padding: EdgeInsets.only(top: 60.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ListTile(
+              title: new Row(children: <Widget>[new Text('Your Cart',
+                  style: new TextStyle(fontWeight: FontWeight.w500, fontSize: 30.0, color: Colors.orangeAccent,),)], mainAxisAlignment: MainAxisAlignment.start,),
+
+                leading: IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(Icons.arrow_back_rounded,
+                    size: 20,
+                    color: Colors.orangeAccent,),
+                ),
+
+               ),
+
+            SizedBox(
+              height: 20.0,
+            ),
+            Container(
+                height: MediaQuery.of(context).size.height/2,
+                child: veggiesCart()),
+
+            SizedBox(
+              height: 20.0,
+            ),
+
+            Spacer(),
+            Divider(),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Total Price",
+                    style: TextStyle(color: Colors.orangeAccent, fontWeight: FontWeight.bold),
+
+                  ),
+                  Text(
+                    "\$"+ total.toString(),
+                    style: TextStyle(color: Colors.orangeAccent, fontWeight: FontWeight.bold),
+
+                  )
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+
+
+
+            GestureDetector(
+              onTap: ()async{
+                int amount= int.parse(wallet!)-amount2;
+                await DatabaseMethods().UpdateUserWallet(id!, amount.toString());
+                await SharedPreferenceHelper().saveUserWallet(amount.toString());
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 10.0),
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                    color: Colors.orangeAccent, borderRadius: BorderRadius.circular(10)),
+                margin: EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
+                child: Center(
+                    child: Text(
+                      "CheckOut",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold),
+                    )),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  itemDashboard(String title, IconData iconData, Color background) => Container(
+    decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+              offset: const Offset(0, 5),
+              color:  Theme.of(context).primaryColor.withOpacity(.2),
+              spreadRadius: 2,
+              blurRadius: 5
+          )
+        ]
+    ),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+              color:  background,
+              shape: BoxShape.circle
+          ),
+          child: Icon(iconData, color: Colors.white),
+        ),
+        const SizedBox(height: 8),
+        Text(title, style: Theme.of(context).textTheme.titleMedium)
+      ],
+    ),
+
+
+
+  );
+}
+
+
+
